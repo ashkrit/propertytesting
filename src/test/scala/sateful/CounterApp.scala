@@ -1,4 +1,4 @@
-package satefull
+package sateful
 
 import org.scalacheck.{Gen, Prop}
 import org.scalacheck.commands._
