@@ -1,14 +1,14 @@
 package string
 
+import org.scalacheck.Gen.{alphaStr, listOf, numStr}
 import org.scalatest.{Matchers, PropSpec}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import string.BetterStringUtil.{contains, truncate}
-import org.scalacheck.Gen.{alphaStr, listOf, numStr}
 
 class StringSpecification extends PropSpec with ScalaCheckPropertyChecks with Matchers {
 
   property("truncate") {
-
+    
     forAll { (value: String, n: Int) =>
 
       val result = truncate(value, n)

@@ -7,7 +7,7 @@ import org.scalacheck.Gen.oneOf
 
 import scala.util.{Success, Try}
 
-object CounterApp {
+object CounterTestingApp {
 
   case class Counter(private var n: Int = 0) {
 
@@ -80,7 +80,6 @@ object CounterApp {
 
     val counterProp: Prop = CounterCommands.property()
     counterProp.check()
-
   }
 
 
