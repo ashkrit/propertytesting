@@ -1,12 +1,10 @@
 package trade.v2
 
-import trade.{Trade, TradeAggregator}
+import trade.{Metrics, Position, Trade, TradeAggregator}
 
 class OptimizedTradePositionAggregator(trades: Seq[Trade]) extends TradeAggregator {
 
-
   val metrics = calculate()
-
 
   @Override def noOfTrades(): Int = {
     metrics.map(_._2.count).sum
@@ -24,21 +22,11 @@ class OptimizedTradePositionAggregator(trades: Seq[Trade]) extends TradeAggregat
     metrics.filter(_._1.direction == "SELL").map(_._2.totalQty).sum
   }
 
-
   @Override def metricsBySecurity(): Seq[(String, String, Double)] = {
 
     metrics.map { case (key, metric) => (key.sec, key.direction, metric.tradeAmount) }
       .toList
-  }
 
-  case class Position(sec: String, direction: String)
-
-  case class Metrics(var count: Int = 0, var totalQty: Long = 0, var tradeAmount: Double = 0) {
-    def +(m: Metrics): Unit = {
-      this.count += m.count
-      this.totalQty += m.totalQty
-      this.tradeAmount += m.tradeAmount
-    }
   }
 
   def calculate(): Seq[(Position, Metrics)] = {

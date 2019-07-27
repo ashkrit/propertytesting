@@ -26,7 +26,6 @@ class TradePositionAggregator(trades: Seq[Trade]) extends TradeAggregator {
       .mapValues { values => values.map(_._2).sum }
       .map { case ((security, direction), value) => (security, direction, value) }
       .toList
-
   }
 }
 

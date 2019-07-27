@@ -52,7 +52,7 @@ object TradeSystemSpec extends Properties("TradingSystemSpec") {
       val newAggregator = makeTradeAggregator(trades)
       val legacySystem = makeLegacyAggregator(trades)
 
-
+      //println(s"Trade Count ${trades.size} -> ${trades}")
       val expectedResult = newAggregator.metricsBySecurity().sortBy { case (security, direction, _) => (security, direction) }
       val actualResult = legacySystem.metricsBySecurity().sortBy { case (security, direction, _) => (security, direction) }
 
