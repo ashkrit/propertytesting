@@ -2,5 +2,7 @@
 
 Sample for property based testing
 
-#Sample for Util class
-StringUtil
+#Sample Includes
+String 
+Complex Aggregation System
+Statefull System
