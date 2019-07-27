@@ -4,46 +4,59 @@ import trade.{Metrics, Position, Trade, TradeAggregator}
 
 class OptimizedTradePositionAggregator(trades: Seq[Trade]) extends TradeAggregator {
 
-  val metrics = calculate()
+  val metrics: Seq[(Position, Metrics)] = calculate()
 
   @Override def noOfTrades(): Int = {
     metrics.map(_._2.count).sum
   }
 
   @Override def totalQty(): Long = {
-    metrics.map(_._2.totalQty).sum
+    metrics
+      .map { case (_, metrics) => metrics.totalQty }
+      .sum
   }
 
   @Override def buyQty(): Long = {
-    metrics.filter(_._1.direction == "BUY").map(_._2.totalQty).sum
+    metrics
+      .filter { case (key, _) => key.direction == "BUY" }
+      .map { case (_, metrics) => metrics.totalQty }
+      .sum
   }
 
   @Override def sellQty(): Long = {
-    metrics.filter(_._1.direction == "SELL").map(_._2.totalQty).sum
+    metrics
+      .filter { case (key, _) => key.direction == "SELL" }
+      .map { case (_, metrics) => metrics.totalQty }
+      .sum
+
   }
 
   @Override def metricsBySecurity(): Seq[(String, String, Double)] = {
 
-    metrics.map { case (key, metric) => (key.sec, key.direction, metric.tradeAmount) }
+    metrics
+      .map { case (key, metric) => (key.sec, key.direction, metric.tradeAmount) }
       .toList
 
   }
 
   def calculate(): Seq[(Position, Metrics)] = {
-    trades.map { trade => (toPositionKey(trade), Metrics(1, trade.qty, trade.qty * trade.price))
+
+    trades.map {
+      trade => (toPositionKey(trade), Metrics(1, trade.qty, trade.qty * trade.price))
     }.groupBy { case (key, _) => key }
       .mapValues {
         values =>
-          values.map { case (_, metrics) => metrics }.reduceLeft((baseMetrics, trade) => {
-            baseMetrics + trade
-            baseMetrics
-          })
+          values
+            .map { case (_, metrics) => metrics }
+            .reduce((metric1, metric2) => {
+              metric1 + metric2
+              metric1
+            })
       }
       .toList
   }
 
-  private def toPositionKey(trade: Trade) = {
-    Position(trade.security, trade.direction)
-  }
+  private def toPositionKey(trade: Trade) = Position(trade.security, trade.direction)
+
 }
 
