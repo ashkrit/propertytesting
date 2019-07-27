@@ -2,7 +2,7 @@ package trading
 
 import org.scalacheck.Prop.forAll
 import org.scalacheck.{Gen, Properties}
-import trade.{Trade, TradePositionAggregator}
+import trade.{Trade, TradeAggregator, TradePositionAggregator}
 
 object TradeSystemSpec extends Properties("TradingSystemSpec") {
 
@@ -11,8 +11,8 @@ object TradeSystemSpec extends Properties("TradingSystemSpec") {
   property("noOfTrades") = forAll(listOfTrades) {
     trades: Seq[Trade] =>
 
-      val aggregator = new TradePositionAggregator(trades)
-      val aggregatorResultChecker = new AggregationExpectedResult(trades, "trade")
+      val aggregator = makeTradeAggregator(trades)
+      val aggregatorResultChecker = legacyAggregator(trades)
 
       aggregator.noOfTrades() == aggregatorResultChecker.noOfTrades()
   }
@@ -20,8 +20,8 @@ object TradeSystemSpec extends Properties("TradingSystemSpec") {
   property("totalQty") = forAll(listOfTrades) {
     trades: Seq[Trade] =>
 
-      val aggregator = new TradePositionAggregator(trades)
-      val aggregatorResultChecker = new AggregationExpectedResult(trades, "trade")
+      val aggregator = makeTradeAggregator(trades)
+      val aggregatorResultChecker = legacyAggregator(trades)
 
       aggregator.totalQty() == aggregatorResultChecker.totalQty()
   }
@@ -30,8 +30,8 @@ object TradeSystemSpec extends Properties("TradingSystemSpec") {
   property("buyQty") = forAll(listOfTrades) {
     trades: Seq[Trade] =>
 
-      val aggregator = new TradePositionAggregator(trades)
-      val aggregatorResultChecker = new AggregationExpectedResult(trades, "trade")
+      val aggregator = makeTradeAggregator(trades)
+      val aggregatorResultChecker = legacyAggregator(trades)
 
       aggregator.buyQty() == aggregatorResultChecker.buyQty()
   }
@@ -39,8 +39,8 @@ object TradeSystemSpec extends Properties("TradingSystemSpec") {
   property("sellQty") = forAll(listOfTrades) {
     trades: Seq[Trade] =>
 
-      val aggregator = new TradePositionAggregator(trades)
-      val aggregatorResultChecker = new AggregationExpectedResult(trades, "trade")
+      val aggregator = makeTradeAggregator(trades)
+      val aggregatorResultChecker = legacyAggregator(trades)
 
       aggregator.sellQty() == aggregatorResultChecker.sellQty()
   }
@@ -48,8 +48,8 @@ object TradeSystemSpec extends Properties("TradingSystemSpec") {
   property("metricsBySecurity") = forAll(listOfTrades) {
     trades: Seq[Trade] =>
 
-      val aggregator = new TradePositionAggregator(trades)
-      val aggregatorResultChecker = new AggregationExpectedResult(trades, "trade")
+      val aggregator = makeTradeAggregator(trades)
+      val aggregatorResultChecker = legacyAggregator(trades)
 
       val expectedResult = aggregatorResultChecker.metricsBySecurity()
       val actualResult = aggregator.metricsBySecurity().sortBy { case (security, direction, _) => (security, direction) }
@@ -57,4 +57,11 @@ object TradeSystemSpec extends Properties("TradingSystemSpec") {
       actualResult == expectedResult
   }
 
+  private def legacyAggregator(trades: Seq[Trade]): TradeAggregator = {
+    new LegacyPositionAggregator(trades, "trade")
+  }
+
+  private def makeTradeAggregator(trades: Seq[Trade]): TradeAggregator = {
+    new TradePositionAggregator(trades)
+  }
 }

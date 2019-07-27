@@ -1,11 +1,11 @@
 package trading
 
 import org.h2.jdbcx.JdbcConnectionPool
-import trade.Trade
+import trade.{Trade, TradeAggregator}
 
 import scala.collection.mutable.ArrayBuffer
 
-class AggregationExpectedResult(trades: Seq[Trade], tableName: String) {
+class LegacyPositionAggregator(trades: Seq[Trade], tableName: String) extends TradeAggregator {
 
   val cp = JdbcConnectionPool.create("jdbc:h2:~/test", "sa", "sa")
   val conn = cp.getConnection

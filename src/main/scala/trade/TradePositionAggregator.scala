@@ -1,25 +1,24 @@
 package trade
 
-class TradePositionAggregator(trades: Seq[Trade]) {
+class TradePositionAggregator(trades: Seq[Trade]) extends TradeAggregator {
 
-  def noOfTrades(): Int = {
+  @Override def noOfTrades(): Int = {
     trades.size
   }
 
-  def totalQty(): Long = {
+  @Override def totalQty(): Long = {
     trades.map(_.qty).sum
   }
 
-  def buyQty(): Long = {
+  @Override def buyQty(): Long = {
     trades.filter(_.direction == "BUY").map(_.qty).sum
   }
 
-  def sellQty(): Long = {
+  @Override def sellQty(): Long = {
     trades.filter(_.direction == "SELL").map(_.qty).sum
   }
 
-
-  def metricsBySecurity(): Seq[(String, String, Double)] = {
+  @Override def metricsBySecurity(): Seq[(String, String, Double)] = {
 
     trades
       .map { trade => ((trade.security, trade.direction), trade.qty * trade.price) }
