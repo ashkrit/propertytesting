@@ -97,8 +97,8 @@ object KeyValueSystemSpec {
 
       def preCondition(s: State): Boolean = true
 
-      def postCondition(s: State, result: Try[Int]): Prop = {
-        val size = s.entries.filter(entry => keysToDelete.contains(entry._1)).size
+      def postCondition(previousState: State, result: Try[Int]): Prop = {
+        val size = previousState.entries.filter(entry => keysToDelete.contains(entry._1)).size
         result == Success(size)
       }
     }
