@@ -1,6 +1,6 @@
 package cache
 
-import cache.impl.SuperFastKeyValueStore
+import cache.impl.{NaiveKeyValueSystem, SuperFastKeyValueStore}
 import org.scalacheck.Gen.{const, frequency, identifier, nonEmptyListOf, oneOf, someOf}
 import org.scalacheck.commands.Commands
 import org.scalacheck.{Gen, Prop}
@@ -13,17 +13,18 @@ object KeyValueSystemSpec {
 
     type Sut = KeyValueSystem[String, String]
 
-    case class State(entries: scala.collection.mutable.Map[String, String])
+    case class State(entries: scala.collection.immutable.Map[String, String])
 
-    def newSut(state: State): Sut = new SuperFastKeyValueStore[String, String]()
+    def newSut(state: State): Sut = new NaiveKeyValueSystem[String, String]()
 
-    def genInitialState: Gen[State] = State(scala.collection.mutable.Map.empty[String, String])
+    def genInitialState: Gen[State] = State(scala.collection.immutable.Map.empty[String, String])
 
     def genCommand(state: State): Gen[Command] = {
       frequency(
         (10, generateNewEntries),
         (2, genGetExisting(state)),
         (6, genGetCommands),
+        (10, genDelExisting(state)),
         (1, const(CheckSize)),
         (10, generateNewEntries),
         (6, genGetCommands)
@@ -84,21 +85,20 @@ object KeyValueSystemSpec {
       type Result = Int
 
       def run(counterSystem: Sut): Result = {
-        keysToDelete.foreach(key => counterSystem.remove(key))
-        keysToDelete.size
+        keysToDelete
+          .map(counterSystem.remove)
+          .filter(result => result)
+          .size
       }
 
       def nextState(s: State): State = {
-        keysToDelete.foreach(key => s.entries.remove(key))
-        s.copy(
-          entries = s.entries
-        )
+        s.copy(entries = s.entries -- keysToDelete)
       }
 
       def preCondition(s: State): Boolean = true
 
       def postCondition(s: State, result: Try[Int]): Prop = {
-        val size = keysToDelete.filterNot(s.entries.contains(_)).size
+        val size = s.entries.filter(entry => keysToDelete.contains(entry._1)).size
         result == Success(size)
       }
     }
