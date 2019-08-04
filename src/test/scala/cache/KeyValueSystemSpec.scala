@@ -1,6 +1,6 @@
 package cache
 
-import cache.impl.{NaiveKeyValueSystem, SuperFastKeyValueStore}
+import cache.impl.NaiveKeyValueSystem
 import org.scalacheck.Gen.{const, frequency, identifier, nonEmptyListOf, oneOf, someOf}
 import org.scalacheck.commands.Commands
 import org.scalacheck.{Gen, Prop}

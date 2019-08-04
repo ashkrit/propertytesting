@@ -55,6 +55,12 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>jobserver</groupId>
+            <artifactId>client</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
     </dependencies>
 
     <build>
