@@ -2,6 +2,10 @@
 
 Sample for property based testing
 
+### Dependency
+
+Compile time dependency on https://github.com/ashkrit/jobserver , build project locally and then compile this project
+
 ### Sample Includes
 
 #### String
