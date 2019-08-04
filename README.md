@@ -25,5 +25,5 @@ Testing Jobserver mico service  - https://github.com/ashkrit/jobserver
 #### Property testing patterns
 
 Input to output when order of input does not matter
-Inverse property
-etc
+<BR> Inverse property
+<BR> etc
